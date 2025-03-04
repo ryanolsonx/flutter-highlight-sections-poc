@@ -26,4 +26,8 @@ aside {
     height: 80px;
     width: 100%;
   }
+
+  &.hidden {
+    display: none;
+  }
 }

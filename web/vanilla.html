@@ -298,30 +298,30 @@
         </p>
       </section>
     </main>
-    <aside>
+    <aside id="widget-container" class="hidden">
       <iframe id="widget" src="http://localhost:8001" frameborder="0"></iframe>
     </aside>
 
     <script>
-      const watchSections = () => {
-        // Handle updating widget
-        const handleSectionScrolledIntoView = (entries, observer) => {
-          entries.forEach(({ isIntersecting, target: section }) => {
-            if (isIntersecting) {
-              const id = section.getAttribute("id");
-              section.classList.add("active");
-              const iframe = document.getElementById("widget");
-              if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage(id, "*");
-              } else {
-                console.log("iframe not ready");
-              }
+      const handleSectionScrolledIntoView = (entries, observer) => {
+        entries.forEach(({ isIntersecting, target: section }) => {
+          if (isIntersecting) {
+            const id = section.getAttribute("id");
+            section.classList.add("active");
+            const iframe = document.getElementById("widget");
+            if (iframe && iframe.contentWindow) {
+              iframe.contentWindow.postMessage(id, "*");
             } else {
-              section.classList.remove("active");
+              console.log("iframe not ready");
             }
-          });
-        };
+          } else {
+            section.classList.remove("active");
+          }
+        });
+      };
 
+      const watchSections = () => {
+        console.log("watching...");
         const observer = new IntersectionObserver(
           handleSectionScrolledIntoView,
           {
@@ -332,11 +332,18 @@
         document
           .querySelectorAll("section")
           .forEach((el) => observer.observe(el));
+
+        console.log("watch started");
+
+        document.getElementById("widget-container").classList.remove("hidden");
+
+        console.log("bottom shown");
       };
 
-      document
-        .getElementById("widget")
-        .addEventListener("load", () => watchSections());
+      setTimeout(() => {
+        console.log("start timeout");
+        watchSections();
+      }, 4000);
     </script>
   </body>
 </html>
