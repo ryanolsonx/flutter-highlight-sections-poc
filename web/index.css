@@ -1,0 +1,29 @@
+/* page specific styles */
+main {
+  padding: 20px;
+  display: grid;
+  gap: 20px;
+}
+
+section {
+  padding: 20px;
+  background: #edebeb;
+  border-radius: 10px;
+
+  &.active {
+    background: rgb(176, 194, 218);
+  }
+}
+
+aside {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  background-color: #dcdcdc;
+  width: 100%;
+
+  & > iframe {
+    height: 80px;
+    width: 100%;
+  }
+}

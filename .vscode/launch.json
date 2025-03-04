@@ -8,7 +8,7 @@
       "name": "widget",
       "request": "launch",
       "type": "dart",
-      "args": ["--web-hostname=0.0.0.0", "--web-port=8001"]
+      "args": ["--web-hostname=localhost", "--web-port=8001"]
     },
     {
       "name": "widget (profile mode)",

@@ -1,3 +1,4 @@
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 
 void main() {
@@ -44,17 +45,41 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Widget',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          children: [MessageListener()],
         ),
       ),
+    );
+  }
+}
+
+class MessageListener extends StatefulWidget {
+  const MessageListener({super.key});
+
+  @override
+  State<MessageListener> createState() => _MessageListenerState();
+}
+
+class _MessageListenerState extends State<MessageListener> {
+  String current = '';
+
+  @override
+  void initState() {
+    html.window.addEventListener("message", handleMessage);
+    super.initState();
+  }
+
+  void handleMessage(html.Event event) {
+    var data = (event as html.MessageEvent).data;
+    setState(() {
+      current = data;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      current,
+      style: Theme.of(context).textTheme.headlineMedium,
     );
   }
 }
