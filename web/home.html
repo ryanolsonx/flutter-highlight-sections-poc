@@ -329,6 +329,8 @@
           hasWidgetLoaded: false,
           timeout: null, // keeps track of retry handler when iframe hasn't loaded yet.
           onSectionScrolledIntoView(name) {
+            this.currentSection = name;
+
             if (this.timeout) clearTimeout(this.timeout);
 
             if (!this.hasWidgetLoaded) {
@@ -339,7 +341,6 @@
               );
             }
 
-            this.currentSection = name;
             this.$refs.widget.contentWindow.postMessage(name);
           },
           getSectionClass(name) {
