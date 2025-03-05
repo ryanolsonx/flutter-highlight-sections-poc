@@ -302,12 +302,12 @@
         </p>
       </section>
     </main>
-    <aside x-cloak x-show="loaded" x-transition>
+    <aside x-cloak x-show="hasWidgetLoaded" x-transition>
       <iframe
         x-ref="widget"
         src="http://localhost:8001"
         frameborder="0"
-        @message.window="loaded = true"
+        @message.window="hasWidgetLoaded = true"
       ></iframe>
     </aside>
 
@@ -326,12 +326,12 @@
       document.addEventListener("alpine:init", () => {
         Alpine.data("app", () => ({
           currentSection: "",
-          loaded: false,
+          hasWidgetLoaded: false,
           timeout: null, // keeps track of retry handler when iframe hasn't loaded yet.
           onSectionScrolledIntoView(name) {
             if (this.timeout) clearTimeout(this.timeout);
 
-            if (!this.loaded) {
+            if (!this.hasWidgetLoaded) {
               // try again - hopefully next time it'll have loaded.
               this.timeout = setTimeout(
                 () => this.onSectionScrolledIntoView(name),
