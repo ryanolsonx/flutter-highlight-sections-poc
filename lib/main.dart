@@ -65,6 +65,7 @@ class _MessageListenerState extends State<MessageListener> {
   @override
   void initState() {
     html.window.addEventListener("message", handleMessage);
+    html.window.parent?.postMessage("loaded", "*");
     super.initState();
   }
 

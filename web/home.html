@@ -7,10 +7,42 @@
     <link rel="stylesheet" href="global.css" />
     <link rel="stylesheet" href="index.css" />
   </head>
-  <body>
+  <body
+    x-data="{
+    current: '',
+    loaded: false,
+    interval: null,
+    tellWidget(name) {
+      this.$refs.widget.contentWindow.postMessage(name);
+    },
+    sectionInView(name) {
+      if (this.interval) clearInterval(this.interval);
+
+      this.current = name;
+
+      if (this.loaded) {
+        this.tellWidget(name);
+        return;
+      }
+
+      this.interval = setInterval(() => {
+        if (this.loaded) {
+          this.tellWidget(name);
+          clearInterval(this.interval);
+        }
+      }, 50);
+    },
+    getSectionClass(name) {
+      return this.current === name ? 'active' : '';
+    }
+  }"
+  >
     <main>
       <h1>Previ</h1>
-      <section id="phone" class="active">
+      <section
+        x-intersect.half="sectionInView('phone')"
+        :class="getSectionClass('phone')"
+      >
         <h2>Phone</h2>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
@@ -66,14 +98,12 @@
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
@@ -82,7 +112,10 @@
         </p>
       </section>
 
-      <section id="auto">
+      <section
+        x-intersect.half="sectionInView('auto')"
+        :class="getSectionClass('auto')"
+      >
         <h2>Auto Insurance</h2>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
@@ -126,14 +159,12 @@
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
@@ -154,7 +185,10 @@
         </p>
       </section>
 
-      <section id="internet">
+      <section
+        x-intersect.half="sectionInView('internet')"
+        :class="getSectionClass('internet')"
+      >
         <h2>Internet</h2>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
@@ -162,14 +196,12 @@
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
@@ -226,7 +258,10 @@
         </p>
       </section>
 
-      <section id="home">
+      <section
+        x-intersect.half="sectionInView('home')"
+        :class="getSectionClass('home')"
+      >
         <h2>Home Insurance</h2>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
@@ -234,14 +269,12 @@
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
           beatae! Vitae earum hic, nostrum esse deleniti autem quos accusantium
           cupiditate eveniet!
         </p>
-
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
           libero officiis voluptate excepturi corrupti debitis quam rem nostrum
@@ -298,52 +331,24 @@
         </p>
       </section>
     </main>
-    <aside id="widget-container" class="hidden">
-      <iframe id="widget" src="http://localhost:8001" frameborder="0"></iframe>
+    <aside x-cloak x-show="loaded" x-transition>
+      <iframe
+        x-ref="widget"
+        src="http://localhost:8001"
+        frameborder="0"
+        @message.window="loaded = true"
+      ></iframe>
     </aside>
 
-    <script>
-      const handleSectionScrolledIntoView = (entries, observer) => {
-        entries.forEach(({ isIntersecting, target: section }) => {
-          if (isIntersecting) {
-            const id = section.getAttribute("id");
-            section.classList.add("active");
-            const iframe = document.getElementById("widget");
-            if (iframe && iframe.contentWindow) {
-              iframe.contentWindow.postMessage(id, "*");
-            } else {
-              console.log("iframe not ready");
-            }
-          } else {
-            section.classList.remove("active");
-          }
-        });
-      };
-
-      const watchSections = () => {
-        console.log("watching...");
-        const observer = new IntersectionObserver(
-          handleSectionScrolledIntoView,
-          {
-            threshold: [0.5],
-          }
-        );
-
-        document
-          .querySelectorAll("section")
-          .forEach((el) => observer.observe(el));
-
-        console.log("watch started");
-
-        document.getElementById("widget-container").classList.remove("hidden");
-
-        console.log("bottom shown");
-      };
-
-      setTimeout(() => {
-        console.log("start timeout");
-        watchSections();
-      }, 4000);
-    </script>
+    <!-- Alpine Intersect Plugin -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"
+    ></script>
+    <!-- Alpine Core -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
   </body>
 </html>
