@@ -11,7 +11,7 @@
     <main>
       <h1>Previ</h1>
       <section
-        x-intersect.half="sectionInView('phone')"
+        x-intersect.half="onSectionScrolledIntoView('phone')"
         :class="getSectionClass('phone')"
       >
         <h2>Phone</h2>
@@ -84,7 +84,7 @@
       </section>
 
       <section
-        x-intersect.half="sectionInView('auto')"
+        x-intersect.half="onSectionScrolledIntoView('auto')"
         :class="getSectionClass('auto')"
       >
         <h2>Auto Insurance</h2>
@@ -157,7 +157,7 @@
       </section>
 
       <section
-        x-intersect.half="sectionInView('internet')"
+        x-intersect.half="onSectionScrolledIntoView('internet')"
         :class="getSectionClass('internet')"
       >
         <h2>Internet</h2>
@@ -230,7 +230,7 @@
       </section>
 
       <section
-        x-intersect.half="sectionInView('home')"
+        x-intersect.half="onSectionScrolledIntoView('home')"
         :class="getSectionClass('home')"
       >
         <h2>Home Insurance</h2>
@@ -325,31 +325,25 @@
     <script>
       document.addEventListener("alpine:init", () => {
         Alpine.data("app", () => ({
-          current: "",
+          currentSection: "",
           loaded: false,
-          interval: null,
-          tellWidget(name) {
-            this.$refs.widget.contentWindow.postMessage(name);
-          },
-          sectionInView(name) {
-            if (this.interval) clearInterval(this.interval);
+          timeout: null, // keeps track of retry handler when iframe hasn't loaded yet.
+          onSectionScrolledIntoView(name) {
+            if (this.timeout) clearTimeout(this.timeout);
 
-            this.current = name;
-
-            if (this.loaded) {
-              this.tellWidget(name);
-              return;
+            if (!this.loaded) {
+              // try again - hopefully next time it'll have loaded.
+              this.timeout = setTimeout(
+                () => this.onSectionScrolledIntoView(name),
+                50
+              );
             }
 
-            this.interval = setInterval(() => {
-              if (this.loaded) {
-                this.tellWidget(name);
-                clearInterval(this.interval);
-              }
-            }, 50);
+            this.currentSection = name;
+            this.$refs.widget.contentWindow.postMessage(name);
           },
           getSectionClass(name) {
-            return this.current === name ? "active" : "";
+            return this.currentSection === name ? "active" : "";
           },
         }));
       });
