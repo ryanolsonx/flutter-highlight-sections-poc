@@ -7,36 +7,7 @@
     <link rel="stylesheet" href="global.css" />
     <link rel="stylesheet" href="index.css" />
   </head>
-  <body
-    x-data="{
-    current: '',
-    loaded: false,
-    interval: null,
-    tellWidget(name) {
-      this.$refs.widget.contentWindow.postMessage(name);
-    },
-    sectionInView(name) {
-      if (this.interval) clearInterval(this.interval);
-
-      this.current = name;
-
-      if (this.loaded) {
-        this.tellWidget(name);
-        return;
-      }
-
-      this.interval = setInterval(() => {
-        if (this.loaded) {
-          this.tellWidget(name);
-          clearInterval(this.interval);
-        }
-      }, 50);
-    },
-    getSectionClass(name) {
-      return this.current === name ? 'active' : '';
-    }
-  }"
-  >
+  <body x-data="app">
     <main>
       <h1>Previ</h1>
       <section
@@ -350,5 +321,38 @@
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("app", () => ({
+          current: "",
+          loaded: false,
+          interval: null,
+          tellWidget(name) {
+            this.$refs.widget.contentWindow.postMessage(name);
+          },
+          sectionInView(name) {
+            if (this.interval) clearInterval(this.interval);
+
+            this.current = name;
+
+            if (this.loaded) {
+              this.tellWidget(name);
+              return;
+            }
+
+            this.interval = setInterval(() => {
+              if (this.loaded) {
+                this.tellWidget(name);
+                clearInterval(this.interval);
+              }
+            }, 50);
+          },
+          getSectionClass(name) {
+            return this.current === name ? "active" : "";
+          },
+        }));
+      });
+    </script>
   </body>
 </html>
