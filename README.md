@@ -1,16 +1,15 @@
-# widget
+# flutter-highlight-sections-poc
 
-A new Flutter project.
+A PoC app that knows where you are on a website keeps a flutter app informed
 
-## Getting Started
+## Getting it going
 
-This project is a starting point for a Flutter application.
+Best setup running through VS Code debug tool using launch.json file.
 
-A few resources to get you started if this is your first Flutter project:
+OR
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+flutter run -d chrome --web-port=8001 --web-hostname=localhost
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Then open `http://localhost:8001/home.html`
