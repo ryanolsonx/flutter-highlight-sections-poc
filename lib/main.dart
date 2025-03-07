@@ -1,5 +1,26 @@
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
+import 'dart:js_interop';
+
+@JS()
+@staticInterop
+class JSWindow {}
+
+extension JSWindowExtension on JSWindow {
+  external void addEventListener(JSString type, JSFunction listener);
+  external void postMessage(JSAny message, JSAny targetOrigin);
+  external JSWindow? get parent;
+}
+
+@JS()
+@staticInterop
+class JSMessageEvent {}
+
+extension JSMessageEventExtension on JSMessageEvent {
+  external JSAny get data;
+}
+
+@JS('window')
+external JSWindow get window;
 
 void main() {
   runApp(const MyApp());
@@ -16,28 +37,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const AI(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class AI extends StatelessWidget {
+  const AI({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,15 +70,15 @@ class _MessageListenerState extends State<MessageListener> {
 
   @override
   void initState() {
-    html.window.addEventListener("message", handleMessage);
-    html.window.parent?.postMessage("loaded", "*");
     super.initState();
+    window.addEventListener("message".toJS, handleMessage.toJS);
+    window.parent?.postMessage("loaded".toJS, "*".toJS);
   }
 
-  void handleMessage(html.Event event) {
-    var data = (event as html.MessageEvent).data;
+  void handleMessage(JSAny event) {
+    final messageEvent = event as JSMessageEvent;
     setState(() {
-      current = data;
+      current = messageEvent.data.toString();
     });
   }
 
